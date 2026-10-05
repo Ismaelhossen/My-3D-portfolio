@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IsMail · Pro 3D Portfolio</title>
+
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Vanilla Tilt -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loader-wrapper">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading...</div>
+    </div>
+
+    <!-- ===== SCROLL PROGRESS ===== -->
+    <div id="scroll-progress"></div>
+
+    <!-- ===== SPEED INDICATOR ===== -->
+    <div class="speed-indicator" id="speedIndicator">
+        <span class="dot good"></span>
+        <span id="speedText">Loading...</span>
+    </div>
+
+    <!-- ===== THEME TOGGLE ===== -->
+    <button class="theme-toggle-btn" id="themeToggleBtn"><i class="fas fa-palette"></i></button>
+
+    <!-- ===== THEME POPUP ===== -->
+    <div class="theme-popup" id="themePopup">
+        <div class="popup-title"><i class="fas fa-palette"></i> Choose Theme</div>
+        <div class="theme-grid">
+            <button class="theme-btn active" data-theme="default" style="background:linear-gradient(135deg,#22d3ee,#8b5cf6)"><span class="label">Default</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="ocean" style="background:linear-gradient(135deg,#38bdf8,#60a5fa)"><span class="label">Ocean</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="sunset" style="background:linear-gradient(135deg,#fb923c,#f59e0b)"><span class="label">Sunset</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#f472b6,#a78bfa)"><span class="label">Pink</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="emerald" style="background:linear-gradient(135deg,#34d399,#6ee7b7)"><span class="label">Emerald</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="golden" style="background:linear-gradient(135deg,#fbbf24,#fcd34d)"><span class="label">Golden</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="violet" style="background:linear-gradient(135deg,#a78bfa,#c4b5fd)"><span class="label">Violet</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#f87171,#fb7185)"><span class="label">Red</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="teal" style="background:linear-gradient(135deg,#2dd4bf,#5eead4)"><span class="label">Teal</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="indigo" style="background:linear-gradient(135deg,#818cf8,#a5b4fc)"><span class="label">Indigo</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+            <button class="theme-btn" data-theme="lime" style="background:linear-gradient(135deg,#a3e635,#bef264)"><span class="label">Lime</span><span class="check-mark"><i class="fas fa-check"></i></span></button>
+        </div>
+        <div class="divider"></div>
+        <div class="popup-title" style="font-size:0.65rem;margin-bottom:8px;"><i class="fas fa-fill-drip"></i> Background</div>
+        <div class="bg-options">
+            <button class="bg-btn active" data-bg="dark"><i class="fas fa-moon"></i> Dark</button>
+            <button class="bg-btn" data-bg="light"><i class="fas fa-sun"></i> Light</button>
+            <button class="bg-btn" data-bg="gradient-dark"><i class="fas fa-layer-group"></i> Dark Blue</button>
+            <button class="bg-btn" data-bg="gradient-purple"><i class="fas fa-layer-group"></i> Purple</button>
+            <button class="bg-btn" data-bg="gradient-ocean"><i class="fas fa-water"></i> Ocean</button>
+            <button class="bg-btn" data-bg="gradient-sunset"><i class="fas fa-sun"></i> Sunset</button>
+        </div>
+    </div>
+
+    <!-- ===== 3D EFFECT TOGGLE ===== -->
+    <button class="effect-toggle-btn" id="effectToggleBtn"><i class="fas fa-cube"></i></button>
+
+    <!-- ===== EFFECT POPUP ===== -->
+    <div class="effect-popup" id="effectPopup">
+        <div class="popup-title"><i class="fas fa-cube"></i> 3D Effects (8)</div>
+        <div class="effect-grid">
+            <button class="effect-btn active" data-effect="particles"><i class="fas fa-circle"></i> Particles</button>
+            <button class="effect-btn active" data-effect="lines"><i class="fas fa-arrows-alt-h"></i> Lines</button>
+            <button class="effect-btn active" data-effect="parallax"><i class="fas fa-arrows-alt"></i> Parallax</button>
+            <button class="effect-btn active" data-effect="float"><i class="fas fa-arrow-up"></i> Float</button>
+            <button class="effect-btn active" data-effect="glow"><i class="fas fa-lightbulb"></i> Glow</button>
+            <button class="effect-btn active" data-effect="rainbow"><i class="fas fa-rainbow"></i> Rainbow</button>
+            <button class="effect-btn active" data-effect="pulse"><i class="fas fa-heart-pulse"></i> Pulse</button>
+            <button class="effect-btn active" data-effect="spiral"><i class="fas fa-fan"></i> Spiral</button>
+        </div>
+    </div>
+
+    <!-- ===== 3D CANVAS ===== -->
+    <div id="three-canvas"></div>
+
+    <!-- ===== CONTENT WRAPPER ===== -->
+    <div class="content-wrapper">
+
+        <!-- ===== NAVBAR ===== -->
+        <nav class="navbar-custom" id="mainNav">
+            <div class="container">
+                <a href="#home" class="logo">
+                    <i class="fas fa-code"></i>
+                    <span class="logo-text">IsMaIL</span>
+                    <span class="logo-dot"></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#experience">Experience</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#" class="nav-cv-btn" id="navDownloadCV"><i class="fas fa-file-pdf"></i> CV</a></li>
+                </ul>
+                <button class="toggler" id="navToggler">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <div class="container" style="padding:0 1rem;">
+                <div class="mobile-menu" id="mobileMenu">
+                    <a href="#home">Home</a>
+                    <a href="#about">About</a>
+                    <a href="#skills">Skills</a>
+                    <a href="#experience">Experience</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#" class="nav-btn" id="mobileDownloadCV"><i class="fas fa-file-pdf"></i> Download CV</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ===== PARTICLE BURST CURSOR ===== -->
+        <div class="cursor-particle" id="cursorParticle"></div>
+
+        <!-- ===== HOME ===== -->
+        <section id="home">
+            <div class="container">
+                <div class="row align-items-center g-4 hero-parallax" id="heroParallax">
+                    <div class="col-md-6">
+                        <div class="status-badge"><span class="dot"></span> Available for Work</div>
+                        <h1>He<span>ll</span>o, I'm</h1>
+                        <h2 class="nameStyle" id="typed-name">IsMaIL Hossen</h2>
+                        <p class="lead" id="typed-desc">A passionate Web Developer and MERN Stack learner focused on building modern, responsive, and user-friendly web applications.</p>
+                        <div class="hero-actions">
+                            <a href="#projects" class="btn-outline-premium">View My Projects</a>
+                            <a href="#" class="cv-download-btn" id="downloadCV">
+                                <i class="fas fa-file-pdf"></i> Download CV
+                            </a>
+                        </div>
+                        <div class="hero-features">
+                            <div class="h-feat"><i class="fas fa-code"></i> 2+ Years Coding</div>
+                            <div class="h-feat"><i class="fas fa-rocket"></i> 5+ Projects</div>
+                            <div class="h-feat"><i class="fas fa-headset"></i> 24/7 Support</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <img src="img/home-img.jpeg" alt="IsMail Hossen" class="home-img" id="heroImage" />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SIDE ICONS ===== -->
+        <div class="iconArea">
+            <a href="https://www.facebook.com/share/19MQAK6pyy/" target="_blank"><i class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.linkedin.com/in/md-ismael-hossen-undefined-5756b034b/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/mdismaelhossen596/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.youtube.com/feed/you" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+            <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+
+        <!-- ===== ABOUT ===== -->
+        <section id="about">
+            <div class="container">
+                <h2 class="section-title fade-up"><i class="fas fa-user-astronaut"></i> About Me</h2>
+                <div class="row align-items-center g-5">
+                    <div class="col-md-6 text-center fade-up-left">
+                        <img src="img/about-img.jpeg" alt="About" class="about-img" />
+                    </div>
+                    <div class="col-md-6 fade-up-right">
+                        <div class="about-text">
+                            <p>I am <span class="highlight-cyan">Md Ismael Hossen</span>, a passionate Computer Technology student currently pursuing a <span class="highlight-purple">Diploma in Engineering</span> at <span class="highlight-white">TMSS Institute of Science and ICT</span>.</p>
+                            <p>I am an aspiring <span class="highlight-purple">Full Stack Web Developer</span> and currently learning the <span class="highlight-cyan">MERN stack (MongoDB, Express.js, React, Node.js)</span>.</p>
+                            <p>As a self-motivated learner, I have already built several projects including portfolio websites, simple web applications, and interactive UI components.</p>
+                            <p>My goal is to become a professional <span class="highlight-purple">Full Stack Developer</span> and work on impactful, scalable, and high-performance web applications.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ACHIEVEMENTS ===== -->
+        <section id="achievements">
+            <div class="achievements-wrapper">
+                <h2 class="section-title fade-up"><i class="fas fa-trophy"></i> My Achievements</h2>
+                <div class="achievements-grid">
+                    <div class="achievement-card fade-up">
+                        <i class="fas fa-code"></i>
+                        <div class="counter-num" data-target="5">0</div>
+                        <p>Projects Completed</p>
+                    </div>
+                    <div class="achievement-card fade-up">
+                        <i class="fas fa-calendar-alt"></i>
+                        <div class="counter-num" data-target="2">0</div>
+                        <p>Years of Coding</p>
+                    </div>
+                    <div class="achievement-card fade-up">
+                        <i class="fas fa-laptop-code"></i>
+                        <div class="counter-num" data-target="16">0</div>
+                        <p>Technologies Known</p>
+                    </div>
+                    <div class="achievement-card fade-up">
+                        <i class="fas fa-graduation-cap"></i>
+                        <div class="counter-num" data-target="1">0</div>
+                        <p>Diploma (Ongoing)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SKILLS ===== -->
+        <section id="skills">
+            <div class="skills-wrapper">
+                <h2 class="section-title fade-up"><i class="fas fa-chart-bar"></i> My Skills</h2>
+                <div class="skill-filter fade-up">
+                    <button class="active" data-filter="all">All</button>
+                    <button data-filter="frontend">Frontend</button>
+                    <button data-filter="backend">Backend</button>
+                    <button data-filter="language">Languages</button>
+                    <button data-filter="other">Other</button>
+                </div>
+                <div class="skills-grid" id="skillsGrid">
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-html5"></i></div><span class="skill-name">HTML</span><span class="skill-percent">85%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="85"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-css3-alt"></i></div><span class="skill-name">CSS</span><span class="skill-percent">80%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="80"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-js"></i></div><span class="skill-name">JavaScript</span><span class="skill-percent">65%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="65"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-react"></i></div><span class="skill-name">React</span><span class="skill-percent">40%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="40"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-bootstrap"></i></div><span class="skill-name">Bootstrap</span><span class="skill-percent">70%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="70"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="backend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-node-js"></i></div><span class="skill-name">Node.js</span><span class="skill-percent">50%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="50"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="backend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-code"></i></div><span class="skill-name">Express.js</span><span class="skill-percent">50%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="50"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="backend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-database"></i></div><span class="skill-name">MongoDB</span><span class="skill-percent">40%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="40"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="backend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-php"></i></div><span class="skill-name">PHP</span><span class="skill-percent">40%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="40"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="language">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-python"></i></div><span class="skill-name">Python</span><span class="skill-percent">50%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="50"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="language">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-java"></i></div><span class="skill-name">Java</span><span class="skill-percent">65%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="65"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="language">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-code"></i></div><span class="skill-name">C</span><span class="skill-percent">40%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="40"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="language">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-cogs"></i></div><span class="skill-name">C++</span><span class="skill-percent">40%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="40"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="other">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fab fa-git-alt"></i></div><span class="skill-name">Git &amp; GitHub</span><span class="skill-percent">60%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="60"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="other">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-brain"></i></div><span class="skill-name">Problem Solving</span><span class="skill-percent">50%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="50"></div></div>
+                    </div>
+                    <div class="skill-card fade-up" data-category="frontend">
+                        <div class="skill-header"><div class="skill-icon-box"><i class="fas fa-mobile-alt"></i></div><span class="skill-name">Responsive Design</span><span class="skill-percent">65%</span></div>
+                        <div class="progress-track"><div class="progress-fill" data-width="65"></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== EXPERIENCE ===== -->
+        <section id="experience">
+            <div class="container">
+                <h2 class="section-title fade-up"><i class="fas fa-briefcase"></i> Experience &amp; Education</h2>
+                <div class="exp-grid">
+                    <div class="exp-card fade-up">
+                        <div class="exp-head"><i class="fas fa-graduation-cap"></i><h3>Education</h3></div>
+                        <div class="exp-date" style="text-align:center;">SSC · 2023</div>
+                        <div class="exp-sub"><strong>Niskinpur High School</strong></div>
+                        <p>Successfully completed the Secondary School Certificate (SSC) with a strong academic foundation in Science.</p>
+                        <br>
+                        <div class="exp-date" style="text-align:center;">Diploma · Present</div>
+                        <div class="exp-sub"><strong>TMSS Institute of Science and ICT</strong></div>
+                        <p>Currently pursuing a Diploma in Engineering in <span class="highlight-purple" style="color:var(--secondary-color);">Computer Science and Technology</span>.</p>
+                    </div>
+                    <div class="exp-card fade-up">
+                        <div class="exp-head"><i class="fas fa-laptop-code"></i><h3>Experience</h3></div>
+                        <div class="exp-date" style="text-align:center;">2+ Years</div>
+                        <div class="exp-sub"><strong>Beginner Web Developer</strong></div>
+                        <p>Built and deployed <span style="color:var(--primary-color);">5+ responsive web applications</span> including portfolios, e-commerce platforms, and interactive UI components. Currently learning MERN stack.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== PROJECTS ===== -->
+        <section id="projects">
+            <div class="container">
+                <h2 class="section-title fade-up"><i class="fas fa-folder-open"></i> Projects</h2>
+                <div class="row g-4">
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/project-prot.jpeg" alt="Portfolio" />
+                            <div class="card-body">
+                                <h5><a href="https://ismaelhossen.github.io/" target="_blank">Portfolio Website</a></h5>
+                                <p>Responsive personal portfolio with modern UI.</p>
+                                <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                                <div class="project-links">
+                                    <a href="https://ismaelhossen.github.io/" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/project-ecom.jpeg" alt="E-Commerce" />
+                            <div class="card-body">
+                                <h5><a href="https://ismaelhossen.github.io/Goriber-E-commerce/" target="_blank">E-Commerce</a></h5>
+                                <p>Online shopping website with product listings.</p>
+                                <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                                <div class="project-links">
+                                    <a href="https://ismaelhossen.github.io/Goriber-E-commerce/" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/project-cel.jpeg" alt="Calculator" />
+                            <div class="card-body">
+                                <h5><a href="https://ismaelhossen.github.io/calculator-apps/" target="_blank">Calculator App</a></h5>
+                                <p>Simple and fast calculator for daily use.</p>
+                                <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                                <div class="project-links">
+                                    <a href="https://ismaelhossen.github.io/calculator-apps/" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/Digital.jpeg" alt="Digital Clock" />
+                            <div class="card-body">
+                                <h5><a href="https://ismaelhossen.github.io/Digital-clock/" target="_blank">Digital Clock</a></h5>
+                                <p>Real-time time display.</p>
+                                <span class="tech-tag">HTML</span><span class="tech-tag">JS</span><span class="tech-tag">CSS</span>
+                                <div class="project-links">
+                                    <a href="https://ismaelhossen.github.io/Digital-clock/" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/To do.jpeg" alt="Todo App" />
+                            <div class="card-body">
+                                <h5><a href="#" target="_blank">Todo List App</a></h5>
+                                <p>Organize tasks with drag & drop support.</p>
+                                <span class="tech-tag">HTML</span><span class="tech-tag">CSS</span><span class="tech-tag">JS</span>
+                                <div class="project-links">
+                                    <a href="#" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 fade-up">
+                        <div class="project-card">
+                            <img src="img/3D Premium Gallery · isMaIL.jpeg" alt="3D Gallery" />
+                            <div class="card-body">
+                                <h5><a href="https://ismaelhossen.github.io/3D-Premium-Gallery/" target="_blank">3D-Premium-Gallery</a></h5>
+                                <p>Interactive gallery with a modern 3D experience.</p>
+                                <span class="tech-tag">JS</span><span class="tech-tag">CSS</span><span class="tech-tag">HTML</span>
+                                <div class="project-links">
+                                    <a href="https://ismaelhossen.github.io/3D-Premium-Gallery/" target="_blank"><i class="fas fa-external-link-alt"></i> Live</a>
+                                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i> Code</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== TESTIMONIALS ===== -->
+        <section id="testimonials">
+            <div class="container">
+                <h2 class="section-title fade-up"><i class="fas fa-comment-dots"></i> What People Say</h2>
+                <div class="testimonial-slider">
+                    <div class="testimonial-track" id="testimonialTrack">
+                        <div class="testimonial-card">
+                            <div class="testi-avatar">JD</div>
+                            <div class="testi-name">John Doe</div>
+                            <div class="testi-role">CEO, TechCorp</div>
+                            <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p class="testi-text">"IsMail is an incredibly talented developer. His attention to detail and ability to create stunning UI is remarkable."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="testi-avatar">SM</div>
+                            <div class="testi-name">Sarah Mitchell</div>
+                            <div class="testi-role">Project Manager</div>
+                            <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                            <p class="testi-text">"Working with IsMail was a pleasure. He delivers high-quality work on time and always goes the extra mile."</p>
+                        </div>
+                        <div class="testimonial-card">
+                            <div class="testi-avatar">AK</div>
+                            <div class="testi-name">Alex Kumar</div>
+                            <div class="testi-role">Freelance Client</div>
+                            <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                            <p class="testi-text">"His portfolio speaks for itself. IsMail created a modern, responsive website that exceeded my expectations."</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-dots" id="testimonialDots">
+                        <button class="active" data-index="0"></button>
+                        <button data-index="1"></button>
+                        <button data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section id="contact">
+            <div class="contact-wrapper">
+                <div class="contact-header"><h2 class="fade-up"><i class="fas fa-envelope"></i> Contact Me</h2></div>
+                <div class="contact-cards-row">
+                    <div class="info-card">
+                        <div class="info-title"><i class="fas fa-address-card"></i> Contact Information</div>
+                        <div class="info-item"><i class="fas fa-user"></i><div class="text"><span class="label">Name</span><span class="value">IsMail Hossen</span></div></div>
+                        <div class="info-item"><i class="fas fa-map-marker-alt"></i><div class="text"><span class="label">Location</span><span class="value">Porsha, Noagaon, Rajshahi</span></div></div>
+                        <div class="info-item"><i class="fas fa-phone-alt"></i><div class="text"><span class="label">Phone</span><span class="value">+880 1799-121833</span></div></div>
+                        <div class="info-item"><i class="fas fa-envelope"></i><div class="text"><span class="label">Email</span><span class="value">mdismaelhossen596@gmail.com</span></div></div>
+                    </div>
+                    <div class="form-card">
+                        <div class="form-title"><i class="fas fa-paper-plane"></i> Send a Message</div>
+                        <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+                            <input type="hidden" name="access_key" value="53aa0f8e-52ba-4164-a8a9-0ce62bc12c73">
+                            <input type="hidden" name="subject" value="New message from Portfolio Contact">
+                            <input type="hidden" name="from_name" value="Portfolio Website">
+                            <div class="form-group"><label for="name">Your Name</label><input type="text" id="name" name="name" placeholder="Enter your name" required /></div>
+                            <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" name="email" placeholder="Enter your email" required /></div>
+                            <div class="form-group"><label for="subject">Subject</label><input type="text" id="subject" name="_subject" placeholder="Enter subject" /></div>
+                            <div class="form-group"><label for="message">Message</label><textarea id="message" name="message" placeholder="Write your message..." required></textarea></div>
+                            <div class="btn-wrapper"><button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i> Send Message</button></div>
+                            <div id="formMessage" class="form-message"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== NEWSLETTER ===== -->
+        <section class="newsletter-section">
+            <div class="newsletter-wrapper">
+                <h3><i class="fas fa-envelope-open-text" style="color:var(--primary-color);"></i> Subscribe to Newsletter</h3>
+                <p>Get the latest updates on my projects and tutorials.</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Enter your email" required id="newsletterEmail" />
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Subscribe</button>
+                </form>
+                <div id="newsletterMsg" class="newsletter-msg"></div>
+            </div>
+        </section>
+
+        <!-- ===== BACK TO TOP ===== -->
+        <button id="back-to-top"><i class="fas fa-arrow-up"></i></button>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="footer-premium">
+            <div class="particle-ft"></div>
+            <div class="particle-ft"></div>
+            <div class="particle-ft"></div>
+
+            <div class="container">
+                <div class="footer-brand">
+                    <div class="logo">
+                        <i class="fas fa-code"></i>
+                        <span>IsMaIL</span>
+                    </div>
+                    <p class="tagline">Building the future, <span>one line of code</span> at a time.</p>
+                </div>
+
+                <div class="footer-columns">
+                    <div class="footer-column">
+                        <h4>About</h4>
+                        <p>A passionate web developer focused on creating modern, responsive, and user-friendly web applications with cutting-edge technologies.</p>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+                            <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                            <li><a href="#skills"><i class="fas fa-chevron-right"></i> Skills</a></li>
+                            <li><a href="#projects"><i class="fas fa-chevron-right"></i> Projects</a></li>
+                            <li><a href="#contact"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Services</h4>
+                        <ul>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Web Development</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> UI/UX Design</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Responsive Design</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> 3D Visualization</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> MERN Stack</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Contact</h4>
+                        <ul class="footer-contact">
+                            <li><i class="fas fa-map-marker-alt"></i> Porsha, Noagaon, Rajshahi</li>
+                            <li><i class="fas fa-phone-alt"></i> +880 1799-121833</li>
+                            <li><i class="fas fa-envelope"></i> mdismaelhossen596@gmail.com</li>
+                            <li><i class="fas fa-clock"></i> Available 24/7</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-social-premium">
+                    <a href="https://www.facebook.com/share/19MQAK6pyy/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.linkedin.com/in/md-ismael-hossen-undefined-5756b034b/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://www.instagram.com/mdismaelhossen596/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://github.com/Ismaelhossen" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.youtube.com/feed/you" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+                </div>
+
+                <div class="footer-bottom-premium">
+                    <p>&copy; 2026 <span style="color:var(--primary-color);font-weight:600;">IsMaIL HoSSeN.</span> Made with <i class="fas fa-heart heart"></i> <span style="color:#64748b;font-weight:400;">&amp;</span> <span style="color:var(--primary-color);">☕</span></p>
+                    <span class="footer-version"><i class="fas fa-code-branch"></i> v5.0</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/script.js"></script>
+
+</body>
+</html>
